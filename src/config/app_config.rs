@@ -50,12 +50,23 @@ impl AppConfig {
             })
             .collect();
 
+        let mut error_loading: Vec<String> = vec![];
+
         for path in paths {
-            let rice_config = RiceConfig::from(fs::read_to_string(path)?);
-            if (rice_config.is_err()) {
-                continue;
+            let content = match fs::read_to_string(&path) {
+                Ok(c) => c,
+                Err(e) => {
+                    eprintln!("Error: Could not read file {}: {}", path.display(), e);
+                    continue;
+                }
+            };
+
+            match RiceConfig::from(content) {
+                Ok(rc) => config.rice_configs.push(rc),
+                Err(_) => {
+                    eprintln!("Error: Could not load rice config at {}", path.display());
+                }
             }
-            config.rice_configs.push(rice_config?);
         }
 
         Ok(config)
