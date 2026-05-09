@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RiceConfig",
+  "type": "object",
+  "required": [
+    "name",
+    "description",
+    "version",
+    "author",
+    "updatedAt",
+    "url"
+  ],
+  "properties": {
+    "name": {
+      "type": "string"
+    },
+    "description": {
+      "type": "string"
+    },
+    "version": {
+      "type": "string"
+    },
+    "author": {
+      "type": "string"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "url": {
+      "type": "string",
+      "format": "uri",
+      "pattern": "^https?://"
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "$ref": "#/definitions/ModifiedFile"
+      },
+      "default": []
+    }
+  },
+  "definitions": {
+    "ModifiedFile": {
+      "type": "object",
+      "required": [
+        "path"
+      ],
+      "properties": {
+        "path": {
+          "type": "string"
+        }
+      },
+      "allOf": [
+        {
+          "$ref": "#/definitions/FileSource"
+        }
+      ]
+    },
+    "FileSource": {
+      "oneOf": [
+        {
+          "type": "object",
+          "required": [
+            "content"
+          ],
+          "properties": {
+            "content": {
+              "type": "string"
+            }
+          }
+        },
+        {
+          "type": "object",
+          "required": [
+            "source"
+          ],
+          "properties": {
+            "source": {
+              "type": "string",
+              "format": "uri",
+              "pattern": "^https?://"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
