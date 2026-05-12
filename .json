@@ -1,0 +1,32 @@
+{
+  "dependencies": {
+    "macos": [
+      {
+        "type": "package",
+        "name": "neovim",
+        "version": "0.9.0"
+      },
+      {
+        "type": "package",
+        "name": "ripgrep"
+      },
+      {
+        "type": "command",
+        "command": "xcode-select --install",
+        "unless": "xcode-select -p"
+      }
+    ],
+    "windows": [
+      {
+        "type": "remote",
+        "url": "https://example.com/installer.exe",
+        "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+        "args": [
+          "/S",
+          "/D=C:\\Apps"
+        ],
+        "checkCommand": "where myapp"
+      }
+    ]
+  }
+}

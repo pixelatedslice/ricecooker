@@ -1,33 +1,23 @@
-use std::env;
-use std::path::PathBuf;
+extern crate core;
 
-mod app;
+use crate::config::app::config::Config;
+use tracing_appender::non_blocking::WorkerGuard;
+
 mod config;
+mod logging;
+mod operating_system;
+mod package_manager;
+mod system;
 
-fn main() -> color_eyre::Result<()> {
+type ErrorMessages = Vec<String>;
+
+#[tokio::main]
+async fn main() -> color_eyre::Result<()> {
     color_eyre::install()?;
 
-    let config = config::app_config::AppConfig::load()?;
+    let config = Config::load().await?;
+
+    let _guard: WorkerGuard = logging::setup(false)?;
 
     Ok(())
-}
-
-pub fn get_config_dir() -> PathBuf {
-    if let Ok(path) = env::var("XDG_CONFIG_HOME") {
-        return [path.as_str(), "ricecooker"].iter().collect();
-    }
-
-    let home: String = env::var("HOME").expect("HOME environment variable not set");
-    [home.as_str(), ".config", "ricecooker"].iter().collect()
-}
-
-pub fn get_data_path() -> PathBuf {
-    if let Ok(path) = env::var("XDG_DATA_HOME") {
-        return [path.as_str(), "ricecooker"].iter().collect();
-    }
-
-    let home: String = env::var("HOME").expect("HOME environment variable not set");
-    [home.as_str(), ".local", "share", "ricecooker"]
-        .iter()
-        .collect()
 }
