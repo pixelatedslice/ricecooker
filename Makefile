@@ -1,19 +1,23 @@
 # Variables [cite: 28]
+BUILD_DIR = target/release
 BINARY_NAME = ricecooker
 TARGETS = aarch64-linux-android aarch64-pc-windows-msvc aarch64-unknown-linux-gnu armv7-linux-androideabi i686-linux-android wasm32-unknown-unknown x86_64-linux-android x86_64-pc-windows-msvc x86_64-unknown-linux-gnu x86_64-unknown-linux-musl
-BUILD_DIR = target/release
+X86_FLAGS = -C target-feature=+sha,+sse2,+ssse3,+sse4.1
+ARM_FLAGS = -C target-feature=+sha2,+crypto
 
 # Default action: build for the host machine [cite: 28]
 all: $(TARGETS)
 
 ## Pattern rule for targets [cite: 28]
+SPECIFIC_FLAGS = $(if $(findstring x86,$@),$(X86_FLAGS),\
+            $(if $(findstring arm,$@),$(ARM_FLAGS),\
+            $(if $(findstring aarch,$@),$(ARM_FLAGS),)))
+
+BUILD_CMD = $(if $(findstring msvc,$@),cargo xwin build,cargo build)
+
 $(TARGETS):
 	@echo "Building for $@..."
-	@if echo "$@" | grep -q "msvc"; then \
-		cargo xwin build --release --target $@; \
-	else \
-		cargo build --release --target $@; \
-	fi
+	RUSTFLAGS="$(SPECIFIC_FLAGS)" $(BUILD_CMD) --release --target $@
 
 ## Build for a specific os and/or group
 desktop: $(filter %-linux-gnu %-linux-musl %-windows-msvc, $(TARGETS))

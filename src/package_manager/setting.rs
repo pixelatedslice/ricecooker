@@ -2,31 +2,10 @@ use crate::package_manager::PackageManager;
 use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use std::path::PathBuf;
 
-#[derive(Default, Debug, Serialize, Deserialize)]
-#[serde(rename_all = "camelCase")]
-pub struct Config {
-    #[serde(skip)]
-    pub config_dir: PathBuf,
-
-    #[serde(skip)]
-    pub temp_dir: PathBuf,
-
-    #[serde(skip)]
-    pub data_path: PathBuf,
-
-    #[serde(skip)]
-    pub rice_path: PathBuf,
-
-    #[serde(skip)]
-    pub package_managers: PathBuf,
-
-    #[serde(serialize_with = "serialize", deserialize_with = "deserialize")]
-    pub package_manager_setting: PackageManagerSetting,
-}
-
-#[derive(Debug, Serialize, Deserialize, Clone)]
+#[derive(Debug, Serialize, Deserialize, Clone, Default)]
 #[serde(rename_all = "camelCase")]
 pub enum PackageManagerSetting {
+    #[default]
     None,
     Preferred(PathBuf),
     Current {
@@ -34,12 +13,6 @@ pub enum PackageManagerSetting {
         #[serde(skip)]
         current: PackageManager,
     },
-}
-
-impl Default for PackageManagerSetting {
-    fn default() -> Self {
-        PackageManagerSetting::None
-    }
 }
 
 fn serialize<S>(value: &PackageManagerSetting, serializer: S) -> color_eyre::Result<S::Ok, S::Error>

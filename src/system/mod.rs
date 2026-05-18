@@ -1,4 +1,5 @@
 pub mod cmd;
-pub mod directories;
+pub mod io;
+pub mod operating_system;
 pub mod privilige;
 pub mod web;
